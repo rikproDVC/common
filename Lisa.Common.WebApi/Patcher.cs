@@ -25,6 +25,7 @@ namespace Lisa.Common.WebApi
             foreach (var patch in patches)
             {
                 ValidateAction(patch.Action, index, errors);
+                ValidateField(patch.Field, obj, index, errors);
                 index++;
             }
 
@@ -44,6 +45,15 @@ namespace Lisa.Common.WebApi
                     var error = string.Format("Cannot apply patch #{0}, because '{1}' is not a valid action.", index, action);
                     errors.Add(error);
                     break;
+            }
+        }
+
+        private static void ValidateField(string field, object obj, int index, IList<string> errors)
+        {
+            if (GetProperty(obj, field) == null)
+            {
+                var error = string.Format("Cannot apply patch #{0}, because the field '{1}' doesn't exist.", index, field);
+                errors.Add(error);
             }
         }
 
