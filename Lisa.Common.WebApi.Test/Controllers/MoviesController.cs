@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Mvc;
+using System.Linq;
 
 namespace Lisa.Common.WebApi.Test
 {
@@ -28,7 +29,12 @@ namespace Lisa.Common.WebApi.Test
         public IActionResult Patch(string id, [FromBody] Patch[] patches)
         {
             var article = _db.FetchMovie(id);
-            Patcher.Apply(patches, article);
+
+            var errors = Patcher.Apply(patches, article);
+            if (errors.Count() > 0)
+            {
+                return new BadRequestObjectResult(errors);
+            }
 
             return new ObjectResult(article);
         }
