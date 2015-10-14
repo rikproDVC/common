@@ -25,10 +25,10 @@ namespace Lisa.Common.WebApi.Test
         }
 
         [HttpPatch("{id}")]
-        public IActionResult Patch(string id, Patch patch)
+        public IActionResult Patch(string id, [FromBody] Patch[] patches)
         {
             var article = _db.FetchMovie(id);
-            patch.Apply(article);
+            Patcher.Apply(patches, article);
 
             return new ObjectResult(article);
         }

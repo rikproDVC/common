@@ -1,9 +1,11 @@
-﻿namespace Lisa.Common.WebApi
+﻿using Newtonsoft.Json.Linq;
+
+namespace Lisa.Common.WebApi
 {
     public class Patch
     {
-        public void Apply(object obj)
-        {
-        }
+        public string Action { get; set; }
+        public string Field { get; set; }
+        public JToken Value { get; set; }
     }
 }

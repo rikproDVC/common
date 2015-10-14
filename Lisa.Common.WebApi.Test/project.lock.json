@@ -4,7 +4,10 @@
   "targets": {
     "DNX,Version=v4.5.1": {
       "Lisa.Common.WebApi/1.0.0": {
-        "type": "project"
+        "type": "project",
+        "dependencies": {
+          "Newtonsoft.Json": "6.0.8"
+        }
       },
       "Microsoft.AspNet.Antiforgery/1.0.0-beta7": {
         "type": "package",
@@ -1245,7 +1248,7 @@
           "lib/dnx451/Microsoft.Net.WebSockets.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.6": {
+      "Newtonsoft.Json/6.0.8": {
         "type": "package",
         "compile": {
           "lib/net45/Newtonsoft.Json.dll": {}
@@ -1411,6 +1414,7 @@
         "type": "project",
         "dependencies": {
           "Microsoft.CSharp": "4.0.1-beta-23225",
+          "Newtonsoft.Json": "6.0.8",
           "System.Collections": "4.0.11-beta-23225",
           "System.Linq": "4.0.1-beta-23225",
           "System.Runtime": "4.0.21-beta-23225",
@@ -2590,7 +2594,7 @@
           "lib/DNXCore50/Microsoft.Win32.Registry.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.6": {
+      "Newtonsoft.Json/6.0.8": {
         "type": "package",
         "compile": {
           "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.dll": {}
@@ -4796,9 +4800,9 @@
         "ref/net46/Microsoft.Win32.Registry.dll"
       ]
     },
-    "Newtonsoft.Json/6.0.6": {
+    "Newtonsoft.Json/6.0.8": {
       "type": "package",
-      "sha512": "w26uZNyCG5VeoKiEOJ4+9/o8koSofLKwHl7WLreIcp0U6r57L7WiRXmjp8MTKFw6dYNZ9AE0lw69WYbIhUsU9Q==",
+      "sha512": "7ut47NDedTW19EbL0JpFDYUP62fcuz27hJrehCDNajdCS5NtqL+E39+7Um3OkNc2wl2ym7K8Ln5eNuLus6mVGQ==",
       "files": [
         "lib/net20/Newtonsoft.Json.dll",
         "lib/net20/Newtonsoft.Json.xml",
@@ -4814,8 +4818,8 @@
         "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.xml",
         "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.dll",
         "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.xml",
-        "Newtonsoft.Json.6.0.6.nupkg",
-        "Newtonsoft.Json.6.0.6.nupkg.sha512",
+        "Newtonsoft.Json.6.0.8.nupkg",
+        "Newtonsoft.Json.6.0.8.nupkg.sha512",
         "Newtonsoft.Json.nuspec",
         "tools/install.ps1"
       ]
