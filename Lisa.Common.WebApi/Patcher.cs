@@ -26,6 +26,7 @@ namespace Lisa.Common.WebApi
             {
                 ValidateAction(patch.Action, index, errors);
                 ValidateField(patch.Field, obj, index, errors);
+                ValidateValue(patch, obj, index, errors);
                 index++;
             }
 
@@ -53,6 +54,21 @@ namespace Lisa.Common.WebApi
             if (GetProperty(obj, field) == null)
             {
                 var error = string.Format("Cannot apply patch #{0}, because the field '{1}' doesn't exist.", index, field);
+                errors.Add(error);
+            }
+        }
+
+        private static void ValidateValue(Patch patch, object obj, int index, IList<string> errors)
+        {
+            var property = GetProperty(obj, patch.Field);
+
+            try
+            {
+                patch.Value?.ToObject(property.PropertyType);
+            }
+            catch
+            {
+                var error = string.Format("Cannot apply patch #{0}, because the value cannot be converted to a {1}.", index, property.PropertyType);
                 errors.Add(error);
             }
         }
