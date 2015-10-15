@@ -62,29 +62,42 @@ namespace Lisa.Common.WebApi
 
         private static void ValidateValue(Patch patch, object obj, int index, IList<string> errors)
         {
-            if (patch.Action.ToLower() == "replace")
+            switch (patch.Action.ToLower())
             {
-                var property = GetProperty(obj, patch.Field);
+                case "replace":
+                    ValidatePropertyValue(patch, obj, index, errors);
+                    break;
 
-                try
-                {
-                    patch.Value?.ToObject(property.PropertyType);
-                }
-                catch
-                {
-                    var error = string.Format("Cannot apply patch #{0}. Cannot replace the value of field '{1}', because the value cannot be converted to a {2}.", index, patch.Field, property.PropertyType);
-                    errors.Add(error);
-                }
+                case "add":
+                case "remove":
+                    ValidateListValue(patch, obj, index, errors);
+                    break;
             }
-            else
+        }
+
+        private static void ValidatePropertyValue(Patch patch, object obj, int index, IList<string> errors)
+        {
+            var property = GetProperty(obj, patch.Field);
+
+            try
             {
-                var property = GetProperty(obj, patch.Field);
-                if (!property.PropertyType.IsConstructedGenericType ||
-                    !property.PropertyType.Implements(typeof(IList<>)))
-                {
-                    var error = string.Format("Cannot apply patch #{0}. Cannot add to field '{1}', because it's not a list.", index, patch.Field);
-                    errors.Add(error);
-                }
+                patch.Value?.ToObject(property.PropertyType);
+            }
+            catch
+            {
+                var error = string.Format("Cannot apply patch #{0}. Cannot replace the value of field '{1}', because the value cannot be converted to a {2}.", index, patch.Field, property.PropertyType);
+                errors.Add(error);
+            }
+        }
+
+        private static void ValidateListValue(Patch patch, object obj, int index, IList<string> errors)
+        {
+            var property = GetProperty(obj, patch.Field);
+            if (!property.PropertyType.IsConstructedGenericType ||
+                !property.PropertyType.Implements(typeof(IList<>)))
+            {
+                var error = string.Format("Cannot apply patch #{0}. Cannot add to field '{1}', because it's not a list.", index, patch.Field);
+                errors.Add(error);
             }
         }
 
