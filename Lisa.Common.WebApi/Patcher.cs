@@ -72,7 +72,17 @@ namespace Lisa.Common.WebApi
                 }
                 catch
                 {
-                    var error = string.Format("Cannot apply patch #{0}, because the value cannot be converted to a {1}.", index, property.PropertyType);
+                    var error = string.Format("Cannot apply patch #{0}. Cannot replace the value of field '{1}', because the value cannot be converted to a {2}.", index, patch.Field, property.PropertyType);
+                    errors.Add(error);
+                }
+            }
+            else
+            {
+                var property = GetProperty(obj, patch.Field);
+                if (!property.PropertyType.IsConstructedGenericType ||
+                    !property.PropertyType.Implements(typeof(IList<>)))
+                {
+                    var error = string.Format("Cannot apply patch #{0}. Cannot add to field '{1}', because it's not a list.", index, patch.Field);
                     errors.Add(error);
                 }
             }
@@ -125,6 +135,24 @@ namespace Lisa.Common.WebApi
         private static Type GetElementType(IList list)
         {
             return list.GetType().GetGenericArguments()[0];
+        }
+
+        private static bool Implements(this Type child, Type ancestor)
+        {
+            if (child.GetGenericTypeDefinition() == ancestor)
+            {
+                return true;
+            }
+
+            foreach (var @interface in child.GetInterfaces())
+            {
+                if (@interface.GetGenericTypeDefinition() == ancestor)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static void SetProperty(object obj, PropertyInfo property, JToken value)
