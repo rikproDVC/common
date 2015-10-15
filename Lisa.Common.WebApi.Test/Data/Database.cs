@@ -13,21 +13,24 @@ namespace Lisa.Common.WebApi.Test
                 {
                     Id = "shawshank-redemption",
                     Title = "The Shawshank Redemption",
-                    Year = 1994
+                    Year = 1994,
+                    Writers = { "Stephen King", "Frank Darabont" }
                 },
 
                 new Movie
                 {
                     Id = "chocolat",
                     Title = "Chocolat",
-                    Year = 2000
+                    Year = 2000,
+                    Writers = { "Joanne Harris" }
                 },
 
                 new Movie
                 {
                     Id = "galaxy-quest",
                     Title = "Galaxy Quest",
-                    Year = 1999
+                    Year = 1999,
+                    Writers = { "David Howard", "Robert Gordon" }
                 }
             };
         }

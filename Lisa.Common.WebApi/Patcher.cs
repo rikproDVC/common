@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -60,16 +62,19 @@ namespace Lisa.Common.WebApi
 
         private static void ValidateValue(Patch patch, object obj, int index, IList<string> errors)
         {
-            var property = GetProperty(obj, patch.Field);
+            if (patch.Action.ToLower() == "replace")
+            {
+                var property = GetProperty(obj, patch.Field);
 
-            try
-            {
-                patch.Value?.ToObject(property.PropertyType);
-            }
-            catch
-            {
-                var error = string.Format("Cannot apply patch #{0}, because the value cannot be converted to a {1}.", index, property.PropertyType);
-                errors.Add(error);
+                try
+                {
+                    patch.Value?.ToObject(property.PropertyType);
+                }
+                catch
+                {
+                    var error = string.Format("Cannot apply patch #{0}, because the value cannot be converted to a {1}.", index, property.PropertyType);
+                    errors.Add(error);
+                }
             }
         }
 
@@ -82,6 +87,10 @@ namespace Lisa.Common.WebApi
                     case "replace":
                         ApplyReplace(patch, obj);
                         break;
+
+                    case "add":
+                        ApplyAdd(patch, obj);
+                        break;
                 }
             }
         }
@@ -92,10 +101,30 @@ namespace Lisa.Common.WebApi
             SetProperty(obj, property, patch.Value);
         }
 
+        private static void ApplyAdd(Patch patch, object obj)
+        {
+            IList property = GetPropertyAsList(obj, patch.Field);
+            Type elementType = GetElementType(property);
+            var value = patch.Value.ToObject(elementType);
+
+            property.Add(value);
+        }
+
         private static PropertyInfo GetProperty(object obj, string field)
         {
             var type = obj.GetType();
             return type.GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+        }
+
+        private static IList GetPropertyAsList(object obj, string field)
+        {
+            PropertyInfo property = GetProperty(obj, field);
+            return (IList) property.GetValue(obj);
+        }
+
+        private static Type GetElementType(IList list)
+        {
+            return list.GetType().GetGenericArguments()[0];
         }
 
         private static void SetProperty(object obj, PropertyInfo property, JToken value)
