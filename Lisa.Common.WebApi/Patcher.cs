@@ -28,7 +28,11 @@ namespace Lisa.Common.WebApi
             {
                 ValidateAction(patch.Action, index, errors);
                 ValidateField(patch.Field, obj, index, errors);
-                ValidateValue(patch, obj, index, errors);
+                if (errors.Count == 0)
+                {
+                    ValidateValue(patch, obj, index, errors);
+                }
+
                 index++;
             }
 
