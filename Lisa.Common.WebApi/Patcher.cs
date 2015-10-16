@@ -65,17 +65,18 @@ namespace Lisa.Common.WebApi
             switch (patch.Action.ToLower())
             {
                 case "replace":
-                    ValidatePropertyValue(patch, obj, index, errors);
+                    ValidatePropertyType(patch, obj, index, errors);
                     break;
 
                 case "add":
                 case "remove":
-                    ValidateListValue(patch, obj, index, errors);
+                    ValidateListType(patch, obj, index, errors);
+                    ValidateElementType(patch, obj, index, errors);
                     break;
             }
         }
 
-        private static void ValidatePropertyValue(Patch patch, object obj, int index, IList<string> errors)
+        private static void ValidatePropertyType(Patch patch, object obj, int index, IList<string> errors)
         {
             var property = GetProperty(obj, patch.Field);
 
@@ -90,13 +91,29 @@ namespace Lisa.Common.WebApi
             }
         }
 
-        private static void ValidateListValue(Patch patch, object obj, int index, IList<string> errors)
+        private static void ValidateListType(Patch patch, object obj, int index, IList<string> errors)
         {
             var property = GetProperty(obj, patch.Field);
             if (!property.PropertyType.IsConstructedGenericType ||
                 !property.PropertyType.Implements(typeof(IList<>)))
             {
                 var error = string.Format("Cannot apply patch #{0}. Cannot add to field '{1}', because it's not a list.", index, patch.Field);
+                errors.Add(error);
+            }
+        }
+
+        private static void ValidateElementType(Patch patch, object obj, int index, IList<string> errors)
+        {
+            var list = GetPropertyAsList(obj, patch.Field);
+            var elementType = GetElementType(list);
+
+            try
+            {
+                patch.Value?.ToObject(elementType);
+            }
+            catch
+            {
+                var error = string.Format("Cannot apply patch #{0}. Cannot add to field '{1}', because the given value cannot be converted to a {2}.", index, patch.Field, elementType);
                 errors.Add(error);
             }
         }
