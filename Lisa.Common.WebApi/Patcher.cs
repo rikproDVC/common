@@ -131,6 +131,10 @@ namespace Lisa.Common.WebApi
                     case "add":
                         ApplyAdd(patch, obj);
                         break;
+
+                    case "remove":
+                        ApplyRemove(patch, obj);
+                        break;
                 }
             }
         }
@@ -148,6 +152,15 @@ namespace Lisa.Common.WebApi
             var value = patch.Value.ToObject(elementType);
 
             property.Add(value);
+        }
+
+        private static void ApplyRemove(Patch patch, object obj)
+        {
+            IList property = GetPropertyAsList(obj, patch.Field);
+            Type elementType = GetElementType(property);
+            var value = patch.Value.ToObject(elementType);
+
+            property.Remove(value);
         }
 
         private static PropertyInfo GetProperty(object obj, string field)
