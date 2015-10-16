@@ -71,7 +71,6 @@ namespace Lisa.Common.WebApi
                 case "add":
                 case "remove":
                     ValidateListType(patch, obj, index, errors);
-                    ValidateElementType(patch, obj, index, errors);
                     break;
             }
         }
@@ -99,6 +98,10 @@ namespace Lisa.Common.WebApi
             {
                 var error = string.Format("Cannot apply patch #{0}. Cannot add to field '{1}', because it's not a list.", index, patch.Field);
                 errors.Add(error);
+            }
+            else
+            {
+                ValidateElementType(patch, obj, index, errors);
             }
         }
 
