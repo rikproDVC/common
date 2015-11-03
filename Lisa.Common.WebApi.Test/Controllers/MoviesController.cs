@@ -28,15 +28,15 @@ namespace Lisa.Common.WebApi.Test
         [HttpPatch("{id}")]
         public IActionResult Patch(string id, [FromBody] Patch[] patches)
         {
-            var article = _db.FetchMovie(id);
+            var movie = _db.FetchMovie(id);
 
-            var errors = Patcher.Apply(patches, article);
+            var errors = Patcher.Apply(patches, movie);
             if (errors.Count() > 0)
             {
                 return new BadRequestObjectResult(errors);
             }
 
-            return new ObjectResult(article);
+            return new ObjectResult(movie);
         }
 
         private readonly Database _db;
