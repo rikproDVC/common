@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Lisa.Common.Sql;
+using System.Collections.Generic;
 using System.Reflection;
 
-namespace Lisa.Common.Sql
+namespace Lisa.Common.UnitTests
 {
     internal class GenericRowProvider : IRowProvider
     {

@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using Lisa.Common.Sql;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
-namespace Lisa.Common.Sql
+namespace Lisa.Common.UnitTests
 {
     public class ObjectMapperTest
     {
@@ -73,6 +75,41 @@ namespace Lisa.Common.Sql
 
             Assert.Equal(1999, result.Release.Year);
             Assert.Equal("USA", result.Release.Country);
+        }
+
+        [Fact]
+        public void ItCanMapSubObjectsWithinSubObjects()
+        {
+            var movie = new
+            {
+                Title = "Galaxy Quest",
+                Release_Country = "USA",
+                Release_Time_Year = 1999,
+                Release_Time_Day = "Thursday"
+            };
+
+            var row = new GenericRowProvider(movie);
+            dynamic result = ObjectMapper.Single(row);
+
+            Assert.Equal("USA", result.Release.Country);
+            Assert.Equal(1999, result.Release.Time.Year);
+            Assert.Equal("Thursday", result.Release.Time.Day);
+        }
+
+        [Fact]
+        public void ItCanMapAListItem()
+        {
+            var movie = new Dictionary<string, object>
+            {
+                { "Title", "Chocolat" },
+                { "#Writers_Name", "Joanne Harris" }
+            };
+
+            var row = new DictionaryRowProvider(movie);
+            dynamic result = ObjectMapper.Single(row);
+
+            Assert.Equal(1, result.Writers.Count);
+            Assert.Equal("Joanne Harris", result.Writers[0].Name);
         }
     }
 }

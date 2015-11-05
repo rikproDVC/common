@@ -18,7 +18,17 @@ namespace Lisa.Common.Sql
                     if (!result.ContainsKey(parts[0]))
                     {
                         var subObject = Single(new SubObjectRowProvider(parts[0], row));
-                        result.Add(new KeyValuePair<string, object>(parts[0], subObject));
+
+                        if (parts[0].StartsWith("#"))
+                        {
+                            var list = new List<ExpandoObject>();
+                            list.Add(subObject);
+                            result.Add(new KeyValuePair<string, object>(parts[0].Substring(1), list));
+                        }
+                        else
+                        {
+                            result.Add(new KeyValuePair<string, object>(parts[0], subObject));
+                        }
                     }
                 }
                 else

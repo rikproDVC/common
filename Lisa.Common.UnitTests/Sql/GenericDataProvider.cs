@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Lisa.Common.Sql;
+using System.Collections.Generic;
 
-namespace Lisa.Common.Sql
+namespace Lisa.Common.UnitTests
 {
     internal class GenericDataProvider : IDataProvider
     {
