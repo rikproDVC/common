@@ -15,9 +15,19 @@ namespace Lisa.Common.UnitTests
         {
             get
             {
-                foreach (var property in _data.GetType().GetProperties())
+                if (_data is IDictionary<string, object>)
                 {
-                    yield return new KeyValuePair<string, object>(property.Name, property.GetValue(_data));
+                    foreach (var field in (ICollection<KeyValuePair<string, object>>) _data)
+                    {
+                        yield return field;
+                    }
+                }
+                else
+                {
+                    foreach (var property in _data.GetType().GetProperties())
+                    {
+                        yield return new KeyValuePair<string, object>(property.Name, property.GetValue(_data));
+                    }
                 }
             }
         }

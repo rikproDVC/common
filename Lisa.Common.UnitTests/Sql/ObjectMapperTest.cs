@@ -17,7 +17,7 @@ namespace Lisa.Common.UnitTests
             };
 
             var row = new GenericRowProvider(movie);
-            dynamic result = ObjectMapper.Single(row);
+            dynamic result = new ObjectMapper().Single(row);
 
             Assert.Equal("Galaxy Quest", result.Title);
             Assert.Equal(1999, result.Year);
@@ -34,7 +34,7 @@ namespace Lisa.Common.UnitTests
             };
 
             var table = new GenericDataProvider(movies);
-            var result = ObjectMapper.Many(table);
+            var result = new ObjectMapper().Many(table);
 
             Assert.Equal(3, result.Count());
             Assert.Equal("Title", result.ElementAt(0).First().Key);
@@ -55,7 +55,7 @@ namespace Lisa.Common.UnitTests
             };
 
             var row = new GenericRowProvider(movie);
-            dynamic result = ObjectMapper.Single(row);
+            dynamic result = new ObjectMapper().Single(row);
 
             Assert.Equal(2000, result.Release.Year);
         }
@@ -71,7 +71,7 @@ namespace Lisa.Common.UnitTests
             };
 
             var row = new GenericRowProvider(movie);
-            dynamic result = ObjectMapper.Single(row);
+            dynamic result = new ObjectMapper().Single(row);
 
             Assert.Equal(1999, result.Release.Year);
             Assert.Equal("USA", result.Release.Country);
@@ -89,7 +89,7 @@ namespace Lisa.Common.UnitTests
             };
 
             var row = new GenericRowProvider(movie);
-            dynamic result = ObjectMapper.Single(row);
+            dynamic result = new ObjectMapper().Single(row);
 
             Assert.Equal("USA", result.Release.Country);
             Assert.Equal(1999, result.Release.Time.Year);
@@ -106,10 +106,37 @@ namespace Lisa.Common.UnitTests
             };
 
             var row = new DictionaryRowProvider(movie);
-            dynamic result = ObjectMapper.Single(row);
+            dynamic result = new ObjectMapper().Single(row);
 
             Assert.Equal(1, result.Writers.Count);
             Assert.Equal("Joanne Harris", result.Writers[0].Name);
+        }
+
+        [Fact]
+        public void ItCanMapAListWithMultipleItems()
+        {
+            var movies = new[]
+            {
+                new Dictionary<string, object>
+                {
+                    { "Title", "Chocolat" },
+                    { "#Writers_Name", "Joanne Harris" }
+                },
+                new Dictionary<string, object>
+                {
+                    { "Title", "Chocolat" },
+                    { "#Writers_Name", "Robert Nelson Jacobs" }
+                }
+            };
+
+            var table = new GenericDataProvider(movies);
+            var result = new ObjectMapper().Many(table);
+
+            Assert.Equal(1, result.Count());
+            dynamic movie = result.ElementAt(0);
+            Assert.Equal(2, movie.Writers.Count);
+            Assert.Equal("Joanne Harris", movie.Writers[0].Name);
+            Assert.Equal("Robert Nelson Jacobs", movie.Writers[1].Name);
         }
     }
 }
