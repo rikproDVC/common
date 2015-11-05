@@ -23,12 +23,14 @@ namespace Lisa.Common.Sql
                 Scalars = new List<KeyValuePair<string, object>>();
                 SubObjects = new List<SubObjectInfo>();
                 Lists = new List<SubObjectInfo>();
+                Arrays = new List<KeyValuePair<string, object>>();
             }
 
             public object Identity { get; set; }
             public IList<KeyValuePair<string, object>> Scalars { get; set; }
             public IList<SubObjectInfo> SubObjects { get; set; }
             public IList<SubObjectInfo> Lists { get; set; }
+            public IList<KeyValuePair<string, object>> Arrays { get; set; }
         }
 
         public ExpandoObject Single(IRowProvider row)
@@ -74,6 +76,7 @@ namespace Lisa.Common.Sql
             }
             
             MapLists(obj, rowInfo);
+            MapArrays(obj, rowInfo);
 
             return obj;
         }
@@ -107,6 +110,20 @@ namespace Lisa.Common.Sql
                 var list = (IList<ExpandoObject>) obj[listInfo.Name];
                 var listItem = new ObjectMapper().MapObject(listInfo.Fields);
                 list.Add(listItem);
+            }
+        }
+
+        private void MapArrays(IDictionary<string, object> obj, RowInfo rowInfo)
+        {
+            foreach (var field in rowInfo.Arrays)
+            {
+                if (!obj.ContainsKey(field.Key))
+                {
+                    obj.Add(field.Key, new List<object>());
+                }
+
+                var array = (IList<object>) obj[field.Key];
+                array.Add(field.Value);
             }
         }
 
@@ -164,6 +181,11 @@ namespace Lisa.Common.Sql
                         listInfo.Fields.Add(subField);
                     }
                 }
+                else if (IsArrayField(field))
+                {
+                    var arrayName = field.Key.Substring(1);
+                    info.Arrays.Add(new KeyValuePair<string, object>(arrayName, field.Value));
+                }
                 else
                 {
                     info.Scalars.Add(field);
@@ -186,6 +208,11 @@ namespace Lisa.Common.Sql
         private bool IsListField(KeyValuePair<string, object> field)
         {
             return field.Key.StartsWith("#") && field.Key.Contains("_");
+        }
+
+        private bool IsArrayField(KeyValuePair<string, object> field)
+        {
+            return field.Key.StartsWith("#") && !field.Key.Contains("_");
         }
 
         private IDictionary<object, ExpandoObject> _objects = new Dictionary<object, ExpandoObject>();

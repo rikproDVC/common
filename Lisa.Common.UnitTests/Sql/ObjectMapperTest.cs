@@ -78,6 +78,27 @@ namespace Lisa.Common.UnitTests
         }
 
         [Fact]
+        public void ItCanMapMultipleSubObjects()
+        {
+            var movie = new
+            {
+                Title = "Galaxy Quest",
+                Release_Year = 1999,
+                Release_Country = "USA",
+                Rating_Body = "MPAA",
+                Rating_Rank = "PG"
+            };
+
+            var row = new GenericRowProvider(movie);
+            dynamic result = new ObjectMapper().Single(row);
+
+            Assert.Equal(1999, result.Release.Year);
+            Assert.Equal("USA", result.Release.Country);
+            Assert.Equal("MPAA", result.Rating.Body);
+            Assert.Equal("PG", result.Rating.Rank);
+        }
+
+        [Fact]
         public void ItCanMapSubObjectsWithinSubObjects()
         {
             var movie = new
@@ -139,6 +160,35 @@ namespace Lisa.Common.UnitTests
             Assert.Equal(2, movie.Writers.Count);
             Assert.Equal("Joanne Harris", movie.Writers[0].Name);
             Assert.Equal("Robert Nelson Jacobs", movie.Writers[1].Name);
+        }
+
+        [Fact]
+        public void ItCanMapAnArray()
+        {
+            var movies = new[]
+            {
+                new Dictionary<string, object>
+                {
+                    { "@Id", 1 },
+                    { "Title", "The Shawshank Redemption" },
+                    { "#Writers", "Frank Darabont" }
+                },
+                new Dictionary<string, object>
+                {
+                    { "@Id", 1 },
+                    { "Title", "The Shawshank Redemption" },
+                    { "#Writers", "Stephen King" }
+                }
+            };
+
+            var table = new GenericDataProvider(movies);
+            var result = new ObjectMapper().Many(table);
+
+            Assert.Equal(1, result.Count());
+            dynamic movie = result.ElementAt(0);
+            Assert.Equal(2, movie.Writers.Count);
+            Assert.Equal("Frank Darabont", movie.Writers[0]);
+            Assert.Equal("Stephen King", movie.Writers[1]);
         }
     }
 }
