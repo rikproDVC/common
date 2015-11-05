@@ -119,11 +119,13 @@ namespace Lisa.Common.UnitTests
             {
                 new Dictionary<string, object>
                 {
+                    { "@Id", 1 },
                     { "Title", "Chocolat" },
                     { "#Writers_Name", "Joanne Harris" }
                 },
                 new Dictionary<string, object>
                 {
+                    { "@Id", 1 },
                     { "Title", "Chocolat" },
                     { "#Writers_Name", "Robert Nelson Jacobs" }
                 }

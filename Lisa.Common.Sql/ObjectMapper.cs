@@ -38,15 +38,15 @@ namespace Lisa.Common.Sql
 
         public IEnumerable<ExpandoObject> Many(IDataProvider table)
         {
+            // NOTE: what happens if you walk over two IDataProviders with the same ObjectMapper?
+            _objects.Clear();
+
             foreach (var row in table.Rows)
             {
-                yield return MapObject(row.Fields);
+                MapObject(row.Fields);
             }
 
-
-            // NOTE: Is this called when enumerator never reaches end of collection?
-            // Also, what happens if you walk over two IDataProviders with the same ObjectMapper?
-            _objects.Clear();
+            return _objects.Values;
         }
 
         private ExpandoObject MapObject(IEnumerable<KeyValuePair<string, object>> fields)
@@ -54,9 +54,17 @@ namespace Lisa.Common.Sql
             ExpandoObject obj;
 
             var rowInfo = GetRowInfo(fields);
-            if (!_objects.ContainsKey(rowInfo.Identity))
+            if (rowInfo.Identity == null)
             {
                 obj = new ExpandoObject();
+                _objects.Add(new object(), obj);
+                MapScalars(obj, rowInfo);
+                MapSubObjects(obj, rowInfo);
+            }
+            else if (!_objects.ContainsKey(rowInfo.Identity))
+            {
+                obj = new ExpandoObject();
+                _objects.Add(rowInfo.Identity, obj);
                 MapScalars(obj, rowInfo);
                 MapSubObjects(obj, rowInfo);
             }
@@ -64,7 +72,7 @@ namespace Lisa.Common.Sql
             {
                 obj = _objects[rowInfo.Identity];
             }
-
+            
             MapLists(obj, rowInfo);
 
             return obj;
@@ -82,7 +90,7 @@ namespace Lisa.Common.Sql
         {
             foreach (var subObjectInfo in rowInfo.SubObjects)
             {
-                var subObject = MapObject(subObjectInfo.Fields);
+                var subObject = new ObjectMapper().MapObject(subObjectInfo.Fields);
                 obj.Add(subObjectInfo.Name, subObject);
             }
         }
@@ -97,8 +105,8 @@ namespace Lisa.Common.Sql
                 }
 
                 var list = (IList<ExpandoObject>) obj[listInfo.Name];
-                var listItem = MapObject(listInfo.Fields);
-                obj.Add(listInfo.Name, listItem);
+                var listItem = new ObjectMapper().MapObject(listInfo.Fields);
+                list.Add(listItem);
             }
         }
 
@@ -156,6 +164,10 @@ namespace Lisa.Common.Sql
                         listInfo.Fields.Add(subField);
                     }
                 }
+                else
+                {
+                    info.Scalars.Add(field);
+                }
             }
 
             return info;
@@ -168,7 +180,7 @@ namespace Lisa.Common.Sql
 
         private bool IsSubObjectField(KeyValuePair<string, object> field)
         {
-            return field.Key.Contains("_") && field.Key.StartsWith("#");
+            return field.Key.Contains("_") && !field.Key.StartsWith("#");
         }
 
         private bool IsListField(KeyValuePair<string, object> field)
@@ -177,39 +189,5 @@ namespace Lisa.Common.Sql
         }
 
         private IDictionary<object, ExpandoObject> _objects = new Dictionary<object, ExpandoObject>();
-
-
-        private static IEnumerable<KeyValuePair<string, object>> GetSimpleFields(IRowProvider row)
-        {
-            foreach (var field in row.Fields)
-            {
-                if (!field.Key.StartsWith("#") && !field.Key.Contains("_"))
-                {
-                    yield return field;
-                }
-            }
-        }
-
-        private static IEnumerable<KeyValuePair<string, object>> GetSubObjectFields(IRowProvider row)
-        {
-            foreach (var field in row.Fields)
-            {
-                if (field.Key.Contains("_") && !field.Key.StartsWith("#"))
-                {
-                    yield return field;
-                }
-            }
-        }
-
-        private static IEnumerable<KeyValuePair<string, object>> GetListFields(IRowProvider row)
-        {
-            foreach (var field in row.Fields)
-            {
-                if (field.Key.StartsWith("#") && field.Key.Contains("_"))
-                {
-                    yield return field;
-                }
-            }
-        }
     }
 }
