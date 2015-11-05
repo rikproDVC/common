@@ -7,11 +7,24 @@ namespace Lisa.Common.Sql
     {
         public static ExpandoObject Single(IRowProvider row)
         {
-            var result = (ICollection<KeyValuePair<string, object>>) new ExpandoObject();
+            var result = (IDictionary<string, object>) new ExpandoObject();
 
             foreach (var field in row.Fields)
             {
-                result.Add(field);
+                if (field.Key.Contains("_"))
+                {
+                    var parts = field.Key.Split('_');
+
+                    if (!result.ContainsKey(parts[0]))
+                    {
+                        var subObject = Single(new SubObjectRowProvider(parts[0], row));
+                        result.Add(new KeyValuePair<string, object>(parts[0], subObject));
+                    }
+                }
+                else
+                {
+                    result.Add(field);
+                }
             }
 
             return (ExpandoObject) result;

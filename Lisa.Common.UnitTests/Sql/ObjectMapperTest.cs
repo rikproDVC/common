@@ -42,5 +42,37 @@ namespace Lisa.Common.Sql
             Assert.Equal("Title", result.ElementAt(2).First().Key);
             Assert.Equal("Chocolat", result.ElementAt(2).First().Value);
         }
+
+        [Fact]
+        public void ItCanMapASubObject()
+        {
+            var movie = new
+            {
+                Title = "Chocolat",
+                Release_Year = 2000,
+            };
+
+            var row = new GenericRowProvider(movie);
+            dynamic result = ObjectMapper.Single(row);
+
+            Assert.Equal(2000, result.Release.Year);
+        }
+
+        [Fact]
+        public void ItCanMapASubObjectWithMultipleProperties()
+        {
+            var movie = new
+            {
+                Title = "Galaxy Quest",
+                Release_Year = 1999,
+                Release_Country = "USA"
+            };
+
+            var row = new GenericRowProvider(movie);
+            dynamic result = ObjectMapper.Single(row);
+
+            Assert.Equal(1999, result.Release.Year);
+            Assert.Equal("USA", result.Release.Country);
+        }
     }
 }
