@@ -262,5 +262,78 @@ namespace Lisa.Common.UnitTests
             Assert.Equal("Stephen", movie.Crew.Writers[1].FirstName);
             Assert.Equal("King", movie.Crew.Writers[1].LastName);
         }
+
+        [Fact]
+        public void ItCanMapAListInAList()
+        {
+            var directors = new[]
+            {
+                new Dictionary<string, object>
+                {
+                    { "@ID", 1 },
+                    { "Name", "Frank Darabont" },
+                    { "#Movies_@ID", "1" },
+                    { "#Movies_Title", "The Shawshank Redemption" },
+                    { "#Movies_#Writers_FirstName", "Frank" },
+                    { "#Movies_#Writers_LastName", "Darabont" },
+                },
+                new Dictionary<string, object>
+                {
+                    { "@ID", 1 },
+                    { "Name", "Frank Darabont" },
+                    { "#Movies_@ID", "1" },
+                    { "#Movies_Title", "The Shawshank Redemption" },
+                    { "#Movies_#Writers_FirstName", "Stephen" },
+                    { "#Movies_#Writers_LastName", "King" },
+                },
+                new Dictionary<string, object>
+                {
+                    { "@ID", 2 },
+                    { "Name", "Lasse Hallström" },
+                    { "#Movies_@ID", "1" },
+                    { "#Movies_Title", "Chocolat" },
+                    { "#Movies_#Writers_FirstName", "Robert" },
+                    { "#Movies_#Writers_LastName", "Jacobs" },
+                },
+                new Dictionary<string, object>
+                {
+                    { "@ID", 2 },
+                    { "Name", "Lasse Hallström" },
+                    { "#Movies_@ID", "1" },
+                    { "#Movies_Title", "Chocolat" },
+                    { "#Movies_#Writers_FirstName", "Joanne" },
+                    { "#Movies_#Writers_LastName", "Harris" },
+                },
+                new Dictionary<string, object>
+                {
+                    { "@ID", 2 },
+                    { "Name", "Lasse Hallström" },
+                    { "#Movies_@ID", "2" },
+                    { "#Movies_Title", "An Unfinished Life" },
+                    { "#Movies_#Writers_FirstName", "Mark" },
+                    { "#Movies_#Writers_LastName", "Spragg" },
+                },
+                new Dictionary<string, object>
+                {
+                    { "@ID", 2 },
+                    { "Name", "Lasse Hallström" },
+                    { "#Movies_@ID", "2" },
+                    { "#Movies_Title", "An Unfinished Life" },
+                    { "#Movies_#Writers_FirstName", "Virginia" },
+                    { "#Movies_#Writers_LastName", "Spragg" },
+                },
+            };
+
+            var table = new GenericDataProvider(directors);
+            var result = new ObjectMapper().Many(table);
+
+            Assert.Equal(2, result.Count());
+            dynamic director = result.ElementAt(0);
+            Assert.Equal("Frank Darabont", director.Name);
+            Assert.Equal(1, director.Movies.Count);
+            Assert.Equal("The Shawshank Redemption", director.Movies[0].Title);
+            Assert.Equal(2, director.Movies[0].Writers.Count);
+            Assert.Equal("Stephen", director.Movies[0].Writers[1].FirstName);
+        }
     }
 }
