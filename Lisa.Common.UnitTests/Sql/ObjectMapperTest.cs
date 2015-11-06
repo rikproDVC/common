@@ -190,5 +190,77 @@ namespace Lisa.Common.UnitTests
             Assert.Equal("Frank Darabont", movie.Writers[0]);
             Assert.Equal("Stephen King", movie.Writers[1]);
         }
+
+        [Fact]
+        public void ItCanMapAnArrayInASubObject()
+        {
+            var movies = new[]
+            {
+                new Dictionary<string, object>
+                {
+                    { "@ID", 1 },
+                    { "Title", "The Shawshank Redemption" },
+                    { "Crew_@ID", 1 },
+                    { "Crew_Director", "Frank Darabont" },
+                    { "Crew_#Writers", "Frank Darabont" },
+                },
+                new Dictionary<string, object>
+                {
+                    { "@ID", 1 },
+                    { "Title", "The Shawshank Redemption" },
+                    { "Crew_@ID", 1 },
+                    { "Crew_Director", "Frank Darabont" },
+                    { "Crew_#Writers", "Stephen King" },
+                }
+            };
+
+            var table = new GenericDataProvider(movies);
+            var result = new ObjectMapper().Many(table);
+
+            Assert.Equal(1, result.Count());
+            dynamic movie = result.ElementAt(0);
+            Assert.Equal("Frank Darabont", movie.Crew.Director);
+            Assert.Equal(2, movie.Crew.Writers.Count);
+            Assert.Equal("Frank Darabont", movie.Crew.Writers[0]);
+            Assert.Equal("Stephen King", movie.Crew.Writers[1]);
+        }
+
+        [Fact]
+        public void ItCanMapAListInASubObject()
+        {
+            var movies = new[]
+            {
+                new Dictionary<string, object>
+                {
+                    { "@ID", 1 },
+                    { "Title", "The Shawshank Redemption" },
+                    { "Crew_@ID", 1 },
+                    { "Crew_Director", "Frank Darabont" },
+                    { "Crew_#Writers_FirstName", "Frank" },
+                    { "Crew_#Writers_LastName", "Darabont" }
+                },
+                new Dictionary<string, object>
+                {
+                    { "@ID", 1 },
+                    { "Title", "The Shawshank Redemption" },
+                    { "Crew_@ID", 1 },
+                    { "Crew_Director", "Frank Darabont" },
+                    { "Crew_#Writers_FirstName", "Stephen" },
+                    { "Crew_#Writers_LastName", "King" }
+                }
+            };
+
+            var table = new GenericDataProvider(movies);
+            var result = new ObjectMapper().Many(table);
+
+            Assert.Equal(1, result.Count());
+            dynamic movie = result.ElementAt(0);
+            Assert.Equal("Frank Darabont", movie.Crew.Director);
+            Assert.Equal(2, movie.Crew.Writers.Count);
+            Assert.Equal("Frank", movie.Crew.Writers[0].FirstName);
+            Assert.Equal("Darabont", movie.Crew.Writers[0].LastName);
+            Assert.Equal("Stephen", movie.Crew.Writers[1].FirstName);
+            Assert.Equal("King", movie.Crew.Writers[1].LastName);
+        }
     }
 }

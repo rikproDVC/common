@@ -56,29 +56,33 @@ namespace Lisa.Common.Sql
             ExpandoObject obj;
 
             var rowInfo = GetRowInfo(fields);
-            if (rowInfo.Identity == null)
-            {
-                obj = new ExpandoObject();
-                _objects.Add(new object(), obj);
-                MapScalars(obj, rowInfo);
-                MapSubObjects(obj, rowInfo);
-            }
-            else if (!_objects.ContainsKey(rowInfo.Identity))
+            if (!_objects.ContainsKey(rowInfo.Identity))
             {
                 obj = new ExpandoObject();
                 _objects.Add(rowInfo.Identity, obj);
                 MapScalars(obj, rowInfo);
-                MapSubObjects(obj, rowInfo);
             }
             else
             {
                 obj = _objects[rowInfo.Identity];
             }
-            
+
+            MapSubObjects(obj, rowInfo);
             MapLists(obj, rowInfo);
             MapArrays(obj, rowInfo);
 
             return obj;
+        }
+
+        private void MapObject(ExpandoObject obj, IEnumerable<KeyValuePair<string, object>> fields)
+        {
+            // This function is only used to add items to lists and arrays inside sub objects (and 
+            // sub objects inside sub objects etc.), so the scalars have already been mapped.
+
+            var rowInfo = GetRowInfo(fields);
+            MapSubObjects(obj, rowInfo);
+            MapLists(obj, rowInfo);
+            MapArrays(obj, rowInfo);
         }
 
         private void MapScalars(IDictionary<string, object> obj, RowInfo rowInfo)
@@ -93,8 +97,16 @@ namespace Lisa.Common.Sql
         {
             foreach (var subObjectInfo in rowInfo.SubObjects)
             {
-                var subObject = new ObjectMapper().MapObject(subObjectInfo.Fields);
-                obj.Add(subObjectInfo.Name, subObject);
+                if (obj.ContainsKey(subObjectInfo.Name))
+                {
+                    var subObject = obj[subObjectInfo.Name];
+                    new ObjectMapper().MapObject((ExpandoObject) subObject, subObjectInfo.Fields);
+                }
+                else
+                {
+                    var subObject = new ObjectMapper().MapObject(subObjectInfo.Fields);
+                    obj.Add(subObjectInfo.Name, subObject);
+                }
             }
         }
 
@@ -132,6 +144,9 @@ namespace Lisa.Common.Sql
             var info = new RowInfo();
             var subObjects = new Dictionary<string, SubObjectInfo>();
             var lists = new Dictionary<string, SubObjectInfo>();
+
+            // If a row doesn't have an explicit identity set, it gets assigned a unique identity.
+            info.Identity = new object();
 
             foreach (var field in fields)
             {
