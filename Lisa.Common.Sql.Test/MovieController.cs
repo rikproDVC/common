@@ -11,6 +11,13 @@ namespace Lisa.Common.Sql.Test
             return new HttpOkObjectResult(movies);
         }
 
+        [HttpGet("{id}")]
+        public ActionResult Get(int id)
+        {
+            var movie = _db.FetchMovie(id);
+            return new HttpOkObjectResult(movie);
+        }
+
         private Database _db = new Database();
     }
 }
