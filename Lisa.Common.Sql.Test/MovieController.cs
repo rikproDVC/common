@@ -14,6 +14,7 @@ namespace Lisa.Common.Sql.Test
         [HttpGet("{id}")]
         public ActionResult Get(int id)
         {
+            _db.FetchMovies();
             var movie = _db.FetchMovie(id);
             return new HttpOkObjectResult(movie);
         }

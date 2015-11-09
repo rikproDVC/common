@@ -23,23 +23,31 @@ namespace Lisa.Common.Sql
         {
             _connection.Open();
 
-            var command = _connection.CreateCommand();
-            command.CommandText = query;
-            command.CommandType = CommandType.Text;
-
-            if (parameters != null)
+            try
             {
-                foreach (var property in parameters.GetType().GetProperties())
-                {
-                    var parameter = new SqlParameter(property.Name, property.GetValue(parameters));
-                    command.Parameters.Add(parameter);
-                }
-            }
+                var command = _connection.CreateCommand();
+                command.CommandText = query;
+                command.CommandType = CommandType.Text;
 
-            var reader = command.ExecuteReader();
-            var dataProvider = new SqlDataProvider(reader);
-            var mapper = new ObjectMapper();
-            return mapper.Many(dataProvider);
+                if (parameters != null)
+                {
+                    foreach (var property in parameters.GetType().GetProperties())
+                    {
+                        var parameter = new SqlParameter(property.Name, property.GetValue(parameters));
+                        command.Parameters.Add(parameter);
+                    }
+                }
+
+                var reader = command.ExecuteReader();
+                var dataProvider = new SqlDataProvider(reader);
+                var mapper = new ObjectMapper();
+                return mapper.Many(dataProvider);
+
+            }
+            finally
+            {
+                _connection.Close();
+            }
         }
 
         public void Dispose()
