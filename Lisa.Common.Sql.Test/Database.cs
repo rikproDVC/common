@@ -13,11 +13,17 @@ namespace Lisa.Common.Sql.Test
             return _gateway.SelectMany(query);
         }
 
-        public object FetchMovie(int id)
+        public object FetchMovie(object id)
         {
             var query = "select * from movies where id=@Id";
             var parameters = new { Id = id };
             return _gateway.SelectSingle(query, parameters);
+        }
+
+        public object CreateMovie(Movie movie)
+        {
+            var query = "insert into movies(title, year) values(@Title, @Year)";
+            return _gateway.Insert(query, movie);
         }
 
         public void Dispose()
