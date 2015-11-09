@@ -22,10 +22,15 @@ namespace Lisa.Common.Sql
                 tree.Add(row);
             }
 
+            // Collect the results instead of yielding them, because that makes the life time
+            // of the data provider predictable. Specifically, if we just yield the results, they
+            // will be retrieved after the connection to the database has already closed.
+            var results = new List<ExpandoObject>();
             foreach (var node in tree.Root.Children)
             {
-                yield return node.CreateObject();
+                results.Add(node.CreateObject());
             }
+            return results;
         }
     }
 }
