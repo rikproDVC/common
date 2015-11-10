@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 
 namespace Lisa.Common.Sql
@@ -39,6 +40,7 @@ namespace Lisa.Common.Sql
             return (ExpandoObject) obj;
         }
 
+        public virtual bool IsEmpty { get; }
         protected virtual void Map(IDictionary<string, object> obj)
         {
         }
@@ -50,14 +52,41 @@ namespace Lisa.Common.Sql
         {
             obj.Add(Name, Value);
         }
+
+        public override bool IsEmpty
+        {
+            get
+            {
+                return Value == null;
+            }
+        }
     }
 
     internal class SubObjectNode : Node
     {
         protected override void Map(IDictionary<string, object> obj)
         {
-            var value = CreateObject();
-            obj.Add(Name, value);
+            if (!IsEmpty)
+            {
+                var value = CreateObject();
+                obj.Add(Name, value);
+            }
+        }
+
+        public override bool IsEmpty
+        {
+            get
+            {
+                foreach (var child in Children)
+                {
+                    if (!child.IsEmpty)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
         }
     }
 
@@ -74,6 +103,14 @@ namespace Lisa.Common.Sql
                 list.Add(listItem);
             }
         }
+
+        public override bool IsEmpty
+        {
+            get
+            {
+                return Children.Count == 0;
+            }
+        }
     }
 
     internal class ArrayNode : Node
@@ -86,6 +123,14 @@ namespace Lisa.Common.Sql
             foreach (var child in Children)
             {
                 array.Add(child.Value);
+            }
+        }
+
+        public override bool IsEmpty
+        {
+            get
+            {
+                return Children.Count == 0;
             }
         }
     }

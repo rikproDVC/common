@@ -335,5 +335,22 @@ namespace Lisa.Common.UnitTests
             Assert.Equal(2, director.Movies[0].Writers.Count);
             Assert.Equal("Stephen", director.Movies[0].Writers[1].FirstName);
         }
+
+        [Fact]
+        public void ItDoesNotMapEmptySubObjects()
+        {
+            object nil = null;
+            var movie = new
+            {
+                Title = "Galaxy Quest",
+                Release_Year = nil,
+                Release_Country = nil
+            };
+
+            var row = new GenericRowProvider(movie);
+            IDictionary<string, object> result = new ObjectMapper().Single(row);
+
+            Assert.False(result.ContainsKey("Release"));
+        }
     }
 }
