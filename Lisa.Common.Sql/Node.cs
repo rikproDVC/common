@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 
 namespace Lisa.Common.Sql
 {
-    internal class Node
+    internal abstract class Node
     {
         public Node()
         {
@@ -18,15 +19,9 @@ namespace Lisa.Common.Sql
 
         public Node Find(object identity)
         {
-            foreach (var child in Children)
-            {
-                if (identity.Equals(child.Identity))
-                {
-                    return child;
-                }
-            }
-
-            return null;
+            return Children
+                .Where(child => identity.Equals(child.Identity))
+                .FirstOrDefault();
         }
 
         public ExpandoObject CreateObject()
@@ -40,109 +35,7 @@ namespace Lisa.Common.Sql
             return (ExpandoObject) obj;
         }
 
-        public virtual bool IsEmpty { get; }
-        protected virtual void Map(IDictionary<string, object> obj)
-        {
-        }
-    }
-
-    internal class ScalarNode : Node
-    {
-        protected override void Map(IDictionary<string, object> obj)
-        {
-            obj.Add(Name, Value);
-        }
-
-        public override bool IsEmpty
-        {
-            get
-            {
-                return Value == null;
-            }
-        }
-    }
-
-    internal class SubObjectNode : Node
-    {
-        protected override void Map(IDictionary<string, object> obj)
-        {
-            if (!IsEmpty)
-            {
-                var value = CreateObject();
-                obj.Add(Name, value);
-            }
-        }
-
-        public override bool IsEmpty
-        {
-            get
-            {
-                foreach (var child in Children)
-                {
-                    if (!child.IsEmpty)
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-        }
-    }
-
-    internal class ListNode : Node
-    {
-        protected override void Map(IDictionary<string, object> obj)
-        {
-            var list = new List<ExpandoObject>();
-            obj.Add(Name, list);
-
-            foreach (var child in Children)
-            {
-                if (!child.IsEmpty)
-                {
-                    var listItem = child.CreateObject();
-                    list.Add(listItem);
-                }
-            }
-        }
-
-        public override bool IsEmpty
-        {
-            get
-            {
-                foreach (var child in Children)
-                {
-                    if (!child.IsEmpty)
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-        }
-    }
-
-    internal class ArrayNode : Node
-    {
-        protected override void Map(IDictionary<string, object> obj)
-        {
-            var array = new List<object>();
-            obj.Add(Name, array);
-
-            foreach (var child in Children)
-            {
-                array.Add(child.Value);
-            }
-        }
-
-        public override bool IsEmpty
-        {
-            get
-            {
-                return Children.Count == 0;
-            }
-        }
+        public abstract bool IsEmpty { get; }
+        protected abstract void Map(IDictionary<string, object> obj);
     }
 }

@@ -24,11 +24,11 @@ namespace Lisa.Common.Sql
             }
         }
 
-        private SqlDataReader _reader;
-
         public bool Next()
         {
             return _reader.Read();
         }
+
+        private SqlDataReader _reader;
     }
 }

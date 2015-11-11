@@ -12,10 +12,9 @@ namespace Lisa.Common.Sql
             if (data.Next())
             {
                 tree.Add(data.Fields);
-                return tree.Root.Children.First().CreateObject();
             }
 
-            return null;
+            return tree.Root.Children.FirstOrDefault()?.CreateObject();
         }
 
         public IEnumerable<ExpandoObject> Many(IDataProvider data)

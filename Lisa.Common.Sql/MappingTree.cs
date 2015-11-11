@@ -6,12 +6,7 @@ namespace Lisa.Common.Sql
 
     internal class MappingTree
     {
-        public MappingTree()
-        {
-            Root = new Node();
-        }
-
-        public Node Root { get; set; }
+        public Node Root { get; set; } = new ListNode();
 
         public void Add(IEnumerable<Field> fields)
         {
@@ -53,7 +48,7 @@ namespace Lisa.Common.Sql
 
             foreach (var value in array.Value)
             {
-                var item = new Node();
+                var item = new ScalarNode();
                 item.Value = value;
                 node.Children.Add(item);
             }
