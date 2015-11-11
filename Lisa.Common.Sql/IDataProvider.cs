@@ -4,6 +4,7 @@ namespace Lisa.Common.Sql
 {
     public interface IDataProvider
     {
-        IEnumerable<IRowProvider> Rows { get; }
+        IEnumerable<KeyValuePair<string, object>> Fields { get; }
+        bool Next();
     }
 }

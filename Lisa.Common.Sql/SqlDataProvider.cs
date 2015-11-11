@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
 namespace Lisa.Common.Sql
@@ -10,17 +11,24 @@ namespace Lisa.Common.Sql
             _reader = reader;
         }
 
-        public IEnumerable<IRowProvider> Rows
+        public IEnumerable<KeyValuePair<string, object>> Fields
         {
             get
             {
-                while (_reader.Read())
+                for (int i = 0; i < _reader.FieldCount; i++)
                 {
-                    yield return new SqlRowProvider(_reader);
+                    string name = _reader.GetName(i);
+                    object value = _reader[i];
+                    yield return new KeyValuePair<string, object>(name, value);
                 }
             }
         }
 
         private SqlDataReader _reader;
+
+        public bool Next()
+        {
+            return _reader.Read();
+        }
     }
 }

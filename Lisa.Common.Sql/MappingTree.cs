@@ -13,9 +13,9 @@ namespace Lisa.Common.Sql
 
         public Node Root { get; set; }
 
-        public void Add(IRowProvider rowData)
+        public void Add(IEnumerable<Field> fields)
         {
-            AddSubObject(Root, new KeyValuePair<string, IEnumerable<Field>>(null, rowData.Fields));
+            AddSubObject(Root, new KeyValuePair<string, IEnumerable<Field>>(null, fields));
         }
 
         private void AddScalar(Node parent, Field scalar)

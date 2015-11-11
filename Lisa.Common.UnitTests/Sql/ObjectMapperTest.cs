@@ -16,7 +16,7 @@ namespace Lisa.Common.UnitTests
                 Year = 1999
             };
 
-            var row = new GenericRowProvider(movie);
+            var row = new GenericDataProvider(movie);
             dynamic result = new ObjectMapper().Single(row);
 
             Assert.Equal("Galaxy Quest", result.Title);
@@ -54,7 +54,7 @@ namespace Lisa.Common.UnitTests
                 Release_Year = 2000,
             };
 
-            var row = new GenericRowProvider(movie);
+            var row = new GenericDataProvider(movie);
             dynamic result = new ObjectMapper().Single(row);
 
             Assert.Equal(2000, result.Release.Year);
@@ -70,7 +70,7 @@ namespace Lisa.Common.UnitTests
                 Release_Country = "USA"
             };
 
-            var row = new GenericRowProvider(movie);
+            var row = new GenericDataProvider(movie);
             dynamic result = new ObjectMapper().Single(row);
 
             Assert.Equal(1999, result.Release.Year);
@@ -89,7 +89,7 @@ namespace Lisa.Common.UnitTests
                 Rating_Rank = "PG"
             };
 
-            var row = new GenericRowProvider(movie);
+            var row = new GenericDataProvider(movie);
             dynamic result = new ObjectMapper().Single(row);
 
             Assert.Equal(1999, result.Release.Year);
@@ -109,7 +109,7 @@ namespace Lisa.Common.UnitTests
                 Release_Time_Day = "Thursday"
             };
 
-            var row = new GenericRowProvider(movie);
+            var row = new GenericDataProvider(movie);
             dynamic result = new ObjectMapper().Single(row);
 
             Assert.Equal("USA", result.Release.Country);
@@ -126,7 +126,7 @@ namespace Lisa.Common.UnitTests
                 { "#Writers_Name", "Joanne Harris" }
             };
 
-            var row = new DictionaryRowProvider(movie);
+            var row = new GenericDataProvider(movie);
             dynamic result = new ObjectMapper().Single(row);
 
             Assert.Equal(1, result.Writers.Count);
@@ -347,7 +347,7 @@ namespace Lisa.Common.UnitTests
                 Release_Country = nil
             };
 
-            var row = new GenericRowProvider(movie);
+            var row = new GenericDataProvider(movie);
             IDictionary<string, object> result = new ObjectMapper().Single(row);
 
             Assert.False(result.ContainsKey("Release"));
@@ -363,7 +363,7 @@ namespace Lisa.Common.UnitTests
                 { "#Writers_LastName", null }
             };
 
-            var row = new GenericRowProvider(movie);
+            var row = new GenericDataProvider(movie);
             dynamic result = new ObjectMapper().Single(row);
 
             Assert.NotNull(result.Writers);
@@ -381,7 +381,7 @@ namespace Lisa.Common.UnitTests
                 { "Crew_#Writers_LastName", null }
             };
 
-            var row = new GenericRowProvider(movie);
+            var row = new GenericDataProvider(movie);
             IDictionary<string, object> result = new ObjectMapper().Single(row);
 
             Assert.False(result.ContainsKey("Crew"));
@@ -398,7 +398,7 @@ namespace Lisa.Common.UnitTests
                 { "Crew_#Writers_LastName", null }
             };
 
-            var row = new GenericRowProvider(movie);
+            var row = new GenericDataProvider(movie);
             IDictionary<string, object> result = new ObjectMapper().Single(row);
 
             Assert.True(result.ContainsKey("Crew"));

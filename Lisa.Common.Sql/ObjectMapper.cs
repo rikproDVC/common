@@ -6,20 +6,24 @@ namespace Lisa.Common.Sql
 {
     public class ObjectMapper
     {
-        public ExpandoObject Single(IRowProvider row)
+        public ExpandoObject Single(IDataProvider data)
         {
             var tree = new MappingTree();
-            tree.Add(row);
+            if (data.Next())
+            {
+                tree.Add(data.Fields);
+                return tree.Root.Children.First().CreateObject();
+            }
 
-            return tree.Root.Children.First().CreateObject();
+            return null;
         }
 
-        public IEnumerable<ExpandoObject> Many(IDataProvider table)
+        public IEnumerable<ExpandoObject> Many(IDataProvider data)
         {
             var tree = new MappingTree();
-            foreach (var row in table.Rows)
+            while (data.Next())
             {
-                tree.Add(row);
+                tree.Add(data.Fields);
             }
 
             // Collect the results instead of yielding them, because that makes the life time
