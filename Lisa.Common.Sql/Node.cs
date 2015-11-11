@@ -99,8 +99,11 @@ namespace Lisa.Common.Sql
 
             foreach (var child in Children)
             {
-                var listItem = child.CreateObject();
-                list.Add(listItem);
+                if (!child.IsEmpty)
+                {
+                    var listItem = child.CreateObject();
+                    list.Add(listItem);
+                }
             }
         }
 
@@ -108,7 +111,15 @@ namespace Lisa.Common.Sql
         {
             get
             {
-                return Children.Count == 0;
+                foreach (var child in Children)
+                {
+                    if (!child.IsEmpty)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
         }
     }

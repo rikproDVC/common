@@ -352,5 +352,59 @@ namespace Lisa.Common.UnitTests
 
             Assert.False(result.ContainsKey("Release"));
         }
+
+        [Fact]
+        public void ItMapsEmptyLists()
+        {
+            var movie = new Dictionary<string, object>
+            {
+                { "Title", "Galaxy Quest" },
+                { "#Writers_FirstName", null },
+                { "#Writers_LastName", null }
+            };
+
+            var row = new GenericRowProvider(movie);
+            dynamic result = new ObjectMapper().Single(row);
+
+            Assert.NotNull(result.Writers);
+            Assert.Equal(0, result.Writers.Count);
+        }
+
+        [Fact]
+        public void ItDoesNotMapSubObjectsWithOnlyEmptyLists()
+        {
+            var movie = new Dictionary<string, object>
+            {
+                { "Title", "Chocolat" },
+                { "Crew_Count", null },
+                { "Crew_#Writers_FirstName", null },
+                { "Crew_#Writers_LastName", null }
+            };
+
+            var row = new GenericRowProvider(movie);
+            IDictionary<string, object> result = new ObjectMapper().Single(row);
+
+            Assert.False(result.ContainsKey("Crew"));
+        }
+
+        [Fact]
+        public void ItMapsEmptyListsInSubObjectsWithOtherProperties()
+        {
+            var movie = new Dictionary<string, object>
+            {
+                { "Title", "Chocolat" },
+                { "Crew_Count", 0 },
+                { "Crew_#Writers_FirstName", null },
+                { "Crew_#Writers_LastName", null }
+            };
+
+            var row = new GenericRowProvider(movie);
+            IDictionary<string, object> result = new ObjectMapper().Single(row);
+
+            Assert.True(result.ContainsKey("Crew"));
+            Assert.Equal(0, ((dynamic) result["Crew"]).Count);
+            Assert.NotNull(((dynamic) result["Crew"]).Writers);
+            Assert.Equal(0, ((dynamic) result["Crew"]).Writers.Count);
+        }
     }
 }
