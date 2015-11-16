@@ -6,9 +6,9 @@ namespace Lisa.Common.Sql
 {
     public class ObjectMapper
     {
-        public ExpandoObject Single(IDataProvider data)
+        public object Single(IDataProvider data)
         {
-            var tree = new MappingTree();
+            var tree = new TreeBuilder();
             if (data.Next())
             {
                 tree.Add(data.Fields);
@@ -17,9 +17,9 @@ namespace Lisa.Common.Sql
             return tree.Root.Children.FirstOrDefault()?.CreateObject();
         }
 
-        public IEnumerable<ExpandoObject> Many(IDataProvider data)
+        public IEnumerable<object> Many(IDataProvider data)
         {
-            var tree = new MappingTree();
+            var tree = new TreeBuilder();
             while (data.Next())
             {
                 tree.Add(data.Fields);
@@ -28,7 +28,7 @@ namespace Lisa.Common.Sql
             // Collect the results instead of yielding them, because that makes the life time
             // of the data provider predictable. Specifically, if we just yield the results, they
             // will be retrieved after the connection to the database has already closed.
-            var results = new List<ExpandoObject>();
+            var results = new List<object>();
             foreach (var node in tree.Root.Children)
             {
                 results.Add(node.CreateObject());

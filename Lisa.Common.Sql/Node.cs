@@ -24,7 +24,7 @@ namespace Lisa.Common.Sql
                 .FirstOrDefault();
         }
 
-        public ExpandoObject CreateObject()
+        public virtual object CreateObject()
         {
             IDictionary<string, object> obj = new ExpandoObject();
             foreach (var child in Children)
@@ -32,7 +32,7 @@ namespace Lisa.Common.Sql
                 child.Map(obj);
             }
 
-            return (ExpandoObject) obj;
+            return obj;
         }
 
         public abstract bool IsEmpty { get; }

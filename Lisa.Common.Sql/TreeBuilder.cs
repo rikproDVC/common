@@ -4,7 +4,7 @@ namespace Lisa.Common.Sql
 {
     using Field = KeyValuePair<string, object>;
 
-    internal class MappingTree
+    internal class TreeBuilder
     {
         public Node Root { get; set; } = new ListNode();
 
@@ -40,7 +40,7 @@ namespace Lisa.Common.Sql
             var node = parent.Find(array.Key);
             if (node == null)
             {
-                node = new ArrayNode();
+                node = new ListNode();
                 node.Identity = array.Key;
                 node.Name = array.Key;
                 parent.Children.Add(node);

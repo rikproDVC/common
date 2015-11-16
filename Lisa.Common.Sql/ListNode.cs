@@ -9,7 +9,7 @@ namespace Lisa.Common.Sql
     {
         protected override void Map(IDictionary<string, object> obj)
         {
-            var list = new List<ExpandoObject>();
+            var list = new List<object>();
             obj.Add(Name, list);
 
             foreach (var child in Children)

@@ -37,12 +37,15 @@ namespace Lisa.Common.UnitTests
             var result = new ObjectMapper().Many(table);
 
             Assert.Equal(3, result.Count());
-            Assert.Equal("Title", result.ElementAt(0).First().Key);
-            Assert.Equal("Galaxy Quest", result.ElementAt(0).First().Value);
-            Assert.Equal("Title", result.ElementAt(1).First().Key);
-            Assert.Equal("The Shawshank Redemption", result.ElementAt(1).First().Value);
-            Assert.Equal("Title", result.ElementAt(2).First().Key);
-            Assert.Equal("Chocolat", result.ElementAt(2).First().Value);
+            var movie = (IDictionary<string, object>) result.ElementAt(0);
+            Assert.Equal("Title", movie.First().Key);
+            Assert.Equal("Galaxy Quest", movie.First().Value);
+            movie = (IDictionary<string, object>) result.ElementAt(1);
+            Assert.Equal("Title", movie.First().Key);
+            Assert.Equal("The Shawshank Redemption", movie.First().Value);
+            movie = (IDictionary<string, object>) result.ElementAt(2);
+            Assert.Equal("Title", movie.First().Key);
+            Assert.Equal("Chocolat", movie.First().Value);
         }
 
         [Fact]
@@ -348,7 +351,7 @@ namespace Lisa.Common.UnitTests
             };
 
             var row = new GenericDataProvider(movie);
-            IDictionary<string, object> result = new ObjectMapper().Single(row);
+            IDictionary<string, object> result = (IDictionary<string, object>) new ObjectMapper().Single(row);
 
             Assert.False(result.ContainsKey("Release"));
         }
@@ -382,7 +385,7 @@ namespace Lisa.Common.UnitTests
             };
 
             var row = new GenericDataProvider(movie);
-            IDictionary<string, object> result = new ObjectMapper().Single(row);
+            IDictionary<string, object> result = (IDictionary<string, object>) new ObjectMapper().Single(row);
 
             Assert.False(result.ContainsKey("Crew"));
         }
@@ -399,7 +402,7 @@ namespace Lisa.Common.UnitTests
             };
 
             var row = new GenericDataProvider(movie);
-            IDictionary<string, object> result = new ObjectMapper().Single(row);
+            IDictionary<string, object> result = (IDictionary<string, object>) new ObjectMapper().Single(row);
 
             Assert.True(result.ContainsKey("Crew"));
             Assert.Equal(0, ((dynamic) result["Crew"]).Count);
