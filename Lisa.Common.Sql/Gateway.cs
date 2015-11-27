@@ -40,6 +40,12 @@ namespace Lisa.Common.Sql
             return command.ExecuteScalar();
         }
 
+        public void Update(string query, object parameters)
+        {
+            var command = CreateCommand(query, parameters);
+            command.ExecuteNonQuery();
+        }
+
         public void Dispose()
         {
             _connection?.Close();
