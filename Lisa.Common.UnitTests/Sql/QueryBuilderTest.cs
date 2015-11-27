@@ -41,5 +41,18 @@ namespace Lisa.Common.UnitTests.Sql
             string result = QueryBuilder.Build(query, parameters);
             Assert.Equal("SELECT * FROM Planets WHERE MoonCount='2' AND Star='Sol'", result);
         }
+
+        [Fact]
+        public void ItSanitizesQuotesWithinValueParameters()
+        {
+            string query = "SELECT * FROM Planets WHERE Name='@Name'";
+            object parameters = new
+            {
+                Name = "Q'onos"
+            };
+
+            string result = QueryBuilder.Build(query, parameters);
+            Assert.Equal("SELECT * FROM Planets WHERE Name='Q''onos'", result);
+        }
     }
 }
