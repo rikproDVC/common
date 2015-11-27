@@ -1,4 +1,5 @@
 ﻿using Lisa.Common.Sql;
+using System;
 using Xunit;
 
 namespace Lisa.Common.UnitTests.Sql
@@ -53,6 +54,31 @@ namespace Lisa.Common.UnitTests.Sql
 
             string result = QueryBuilder.Build(query, parameters);
             Assert.Equal("SELECT * FROM Planets WHERE Name='Q''onos'", result);
+        }
+
+        [Fact]
+        public void ItReplacesNameParameters()
+        {
+            string query = "SELECT * FROM Planets WHERE $Column='Vulcan'";
+            object parameters = new
+            {
+                Column = "Inhabitant"
+            };
+
+            string result = QueryBuilder.Build(query, parameters);
+            Assert.Equal("SELECT * FROM Planets WHERE [Inhabitant]='Vulcan'", result);
+        }
+
+        [Fact]
+        public void ItRejectsNameParametersWithSquareBrackets()
+        {
+            string query = "SELECT * FROM Planets WHERE $Column='Vulcan'";
+            object parameters = new
+            {
+                Column = "[Inhabitant]"
+            };
+
+            Assert.Throws<ArgumentException>(() => QueryBuilder.Build(query, parameters));
         }
     }
 }

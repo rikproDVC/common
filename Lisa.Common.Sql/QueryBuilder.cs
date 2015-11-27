@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace Lisa.Common.Sql
 {
@@ -16,6 +17,21 @@ namespace Lisa.Common.Sql
 
                     name = string.Format("@{0}", property.Name);
                     query = query.Replace(name, value);
+
+                    name = string.Format("${0}", property.Name);
+
+                    if (query.Contains(name))
+                    {
+                        string rawValue = property.GetValue(parameters).ToString();
+                        if (rawValue.Contains("[") || rawValue.Contains("]"))
+                        {
+                            string error = string.Format("Argument '{0}' contains illegal characters.", property.Name);
+                            throw new ArgumentException(error);
+                        }
+
+                        value = string.Format("[{0}]", rawValue);
+                        query = query.Replace(name, value);
+                    }
                 }
             }
 
