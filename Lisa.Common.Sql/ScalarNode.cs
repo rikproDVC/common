@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
 
 namespace Lisa.Common.Sql
 {
@@ -11,7 +9,7 @@ namespace Lisa.Common.Sql
         {
             get
             {
-                return Value == null;
+                return Value == null || Value == DBNull.Value;
             }
         }
 

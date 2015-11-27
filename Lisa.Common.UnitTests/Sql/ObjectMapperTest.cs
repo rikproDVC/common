@@ -1,4 +1,5 @@
 ﻿using Lisa.Common.Sql;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -408,6 +409,36 @@ namespace Lisa.Common.UnitTests
             Assert.Equal(0, ((dynamic) result["Crew"]).Count);
             Assert.NotNull(((dynamic) result["Crew"]).Writers);
             Assert.Equal(0, ((dynamic) result["Crew"]).Writers.Count);
+        }
+
+        [Fact]
+        public void ItTreatsDbNullAsAnEmptyValue()
+        {
+            var movies = new[]
+            {
+                new Dictionary<string, object>
+                {
+                    { "@ID", 1 },
+                    { "Title", "Chocolat" },
+                    { "#Directors_@ID", DBNull.Value },
+                    { "#Directors_FirstName", DBNull.Value },
+                    { "#Directors_LastName", DBNull.Value }
+                },
+                new Dictionary<string, object>
+                {
+                    { "@ID", 2 },
+                    { "Title", "The Shawshank Redemption" },
+                    { "#Directors_@ID", 12 },
+                    { "#Directors_FirstName", "Frank" },
+                    { "#Directors_LastName", "Darabont" }
+                }
+            };
+
+            var table = new GenericDataProvider(movies);
+            dynamic result = new ObjectMapper().Many(table);
+
+            var movie = result[0];
+            Assert.Equal(0, movie.Directors.Count);
         }
     }
 }
