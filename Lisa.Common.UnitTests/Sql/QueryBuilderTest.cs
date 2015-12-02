@@ -80,5 +80,17 @@ namespace Lisa.Common.UnitTests.Sql
 
             Assert.Throws<ArgumentException>(() => QueryBuilder.Build(query, parameters));
         }
+
+        [Fact]
+        public void ItRejectsQueryIfParameterIsMissing()
+        {
+            string query = "SELECT * FROM Planets WHERE MoonCount=@MoonCount";
+            object parameters = new
+            {
+                Name = "Vulcan"
+            };
+
+            Assert.Throws<ArgumentException>(() => QueryBuilder.Build(query, parameters));
+        }
     }
 }
