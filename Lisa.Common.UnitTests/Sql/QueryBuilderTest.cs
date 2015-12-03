@@ -92,5 +92,18 @@ namespace Lisa.Common.UnitTests.Sql
 
             Assert.Throws<ArgumentException>(() => QueryBuilder.Build(query, parameters));
         }
+
+        [Fact]
+        public void ItConvertsAListOfValues()
+        {
+            string query = "SELECT * FROM Planets WHERE Name IN (@Names)";
+            object parameters = new
+            {
+                Names = new string[] { "Romulus", "Q'onos", "Vulcan" }
+            };
+
+            string result = QueryBuilder.Build(query, parameters);
+            Assert.Equal("SELECT * FROM Planets WHERE Name IN ('Romulus', 'Q''onos', 'Vulcan')", result);
+        }
     }
 }

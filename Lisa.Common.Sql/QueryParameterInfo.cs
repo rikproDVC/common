@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 
 namespace Lisa.Common.Sql
 {
@@ -15,28 +19,37 @@ namespace Lisa.Common.Sql
             }
             set
             {
-                _value = Sanitize(value);
+                _value = ConvertToString(value);
             }
         }
 
-        protected abstract string Sanitize(object value);
+        protected abstract string ConvertToString(object value);
 
         private string _value;
     }
 
     internal class ValueParameterInfo : QueryParameterInfo
     {
-        protected override string Sanitize(object value)
+        protected override string ConvertToString(object value)
         {
-            var safe = value.ToString().Replace("'", "''");
-            var quoted = string.Format("'{0}'", safe);
-            return quoted;
+            var list = value as IEnumerable<object>;
+            if (list != null)
+            {
+                var values = list.Select(item => ConvertToString(item));
+                return string.Join(", ", values);
+            }
+            else
+            {
+                var safe = value.ToString().Replace("'", "''");
+                var quoted = string.Format("'{0}'", safe);
+                return quoted;
+            }
         }
     }
 
     internal class NameParameterInfo : QueryParameterInfo
     {
-        protected override string Sanitize(object value)
+        protected override string ConvertToString(object value)
         {
             var stringValue = value.ToString();
             if (stringValue.Contains("[") || stringValue.Contains("]"))
