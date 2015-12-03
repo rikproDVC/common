@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 
 namespace Lisa.Common.Sql
 {
@@ -55,17 +54,8 @@ namespace Lisa.Common.Sql
         private SqlCommand CreateCommand(string query, object parameters = null)
         {
             var command = _connection.CreateCommand();
-            command.CommandText = query;
+            command.CommandText = QueryBuilder.Build(query, parameters);
             command.CommandType = CommandType.Text;
-
-            if (parameters != null)
-            {
-                foreach (var property in parameters.GetType().GetProperties())
-                {
-                    var parameter = new SqlParameter(property.Name, property.GetValue(parameters));
-                    command.Parameters.Add(parameter);
-                }
-            }
 
             return command;
         }
