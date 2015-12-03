@@ -17,7 +17,7 @@ namespace Lisa.Common.Sql
 
         private static IEnumerable<QueryParameterInfo> ExtractParameters(string query, object values)
         {
-            var valueParameters = ExtractParameters<ValueParameterInfo>(@"(?<quote>')@(?<name>\w+)(?<-quote>')|@(?<name>\w+)", query, values);
+            var valueParameters = ExtractParameters<ValueParameterInfo>(@"(?<quote>')@(?<name>\w+)(?<-quote>')|(?<!_)@(?<name>\w+)", query, values);
             var nameParameters = ExtractParameters<NameParameterInfo>(@"(?<bracket>\[)\$(?<name>\w+)(?<-bracket>\])|\$(?<name>\w+)", query, values);
             return valueParameters.Union(nameParameters);
         }

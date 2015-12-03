@@ -105,5 +105,18 @@ namespace Lisa.Common.UnitTests.Sql
             string result = QueryBuilder.Build(query, parameters);
             Assert.Equal("SELECT * FROM Planets WHERE Name IN ('Romulus', 'Q''onos', 'Vulcan')", result);
         }
+
+        [Fact]
+        public void ItIgnoresAtSignsForTheObjectMapper()
+        {
+            string query = @"SELECT Id AS [@], #Moons_@Id, Moon.Name AS #Moons_Name FROM Planets LEFT JOIN Moons ON Planets.Id = Moon.Planet WHERE Planets.Name = @Name";
+            object parameters = new
+            {
+                Name = "Vulcan"
+            };
+
+            string result = QueryBuilder.Build(query, parameters);
+            Assert.Equal("SELECT Id AS [@], #Moons_@Id, Moon.Name AS #Moons_Name FROM Planets LEFT JOIN Moons ON Planets.Id = Moon.Planet WHERE Planets.Name = 'Vulcan'", result);
+        }
     }
 }
