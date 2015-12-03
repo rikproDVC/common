@@ -29,6 +29,13 @@ namespace Lisa.Common.Sql.Test
             return _gateway.Insert(query, movie);
         }
 
+        public void DeleteMovie(object id)
+        {
+            var query = "delete from movies where id=@Id";
+            var parameters = new { Id = id };
+            _gateway.Delete(query, parameters);
+        }
+
         public void Dispose()
         {
             _gateway?.Dispose();

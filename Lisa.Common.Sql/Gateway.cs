@@ -45,6 +45,12 @@ namespace Lisa.Common.Sql
             command.ExecuteNonQuery();
         }
 
+        public void Delete(string query, object parameters)
+        {
+            var command = CreateCommand(query, parameters);
+            command.ExecuteNonQuery();
+        }
+
         public void Dispose()
         {
             _connection?.Close();

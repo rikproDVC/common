@@ -27,6 +27,13 @@ namespace Lisa.Common.Sql.Test
             return new HttpOkObjectResult(created);
         }
 
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
+        {
+            _db.DeleteMovie(id);
+            return new HttpStatusCodeResult(204);
+        }
+
         private Database _db = new Database();
     }
 }
