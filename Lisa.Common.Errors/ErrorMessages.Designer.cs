@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Lisa.Common.ErrorManager {
+namespace Lisa.Common.Errors {
     using System;
     using System.Reflection;
     
@@ -38,7 +38,7 @@ namespace Lisa.Common.ErrorManager {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Lisa.Common.ErrorManager.ErrorMessages", typeof(ErrorMessages).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Lisa.Common.Errors.ErrorMessages", typeof(ErrorMessages).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -141,38 +141,11 @@ namespace Lisa.Common.ErrorManager {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to The field {field} cannot be replaced..
+        ///    Looks up a localized string similar to The field {field} does not supprt the patch action {action}..
         /// </summary>
         internal static string e12030002 {
             get {
                 return ResourceManager.GetString("e12030002", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///    Looks up a localized string similar to The list {field} cannot be added to..
-        /// </summary>
-        internal static string e12030003 {
-            get {
-                return ResourceManager.GetString("e12030003", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///    Looks up a localized string similar to The list {field} cannot be removed from..
-        /// </summary>
-        internal static string e12030004 {
-            get {
-                return ResourceManager.GetString("e12030004", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///    Looks up a localized string similar to The field {field} cannot be moved..
-        /// </summary>
-        internal static string e12030005 {
-            get {
-                return ResourceManager.GetString("e12030005", resourceCulture);
             }
         }
         

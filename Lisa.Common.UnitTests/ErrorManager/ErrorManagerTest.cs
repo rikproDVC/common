@@ -1,5 +1,5 @@
 ﻿using Xunit;
-using Lisa.Common.ErrorManager;
+using Lisa.Common.Errors;
 using System.Collections.Generic;
 using System.Resources;
 
@@ -31,7 +31,7 @@ namespace Lisa.Common.UnitTests
         }
 
         [Fact]
-        public void ItUsesAListAsParameterWithCommaSeperator()
+        public void ItUsesAListAsParameterWithCommaSeparator()
         {
             ErrorBuilder.Initialize();
 
@@ -111,34 +111,6 @@ namespace Lisa.Common.UnitTests
 
             Assert.Equal("Second error file works.", result.Message);
             Assert.Equal(19010001, result.Code);
-        }
-
-        // Translation resource tests
-        [Fact]
-        public void ItCanUseTranslationFiles()
-        {
-            ErrorBuilder.Initialize(new Dictionary<string, ResourceManager>() { { "testLocale", TestTranslations.ResourceManager } });
-
-            var result = ErrorBuilder.BuildError(11010001, "testLocale");
-
-            Assert.Equal("Default translated error works.", result.Message);
-            Assert.Equal(11010001, result.Code);
-
-            result = ErrorBuilder.BuildError(19010001, "testLocale");
-
-            Assert.Equal("Custom translated error works.", result.Message);
-            Assert.Equal(19010001, result.Code);
-        }
-
-        [Fact]
-        public void ItFallsBackToDefaultErrorsWhenTranslationIsMissing()
-        {
-            ErrorBuilder.Initialize(new Dictionary<string, ResourceManager>() { { "testLocale", TestTranslations.ResourceManager } });
-
-            var result = ErrorBuilder.BuildError(14020001, "testLocale");
-
-            Assert.Equal("You are not authorized to view this resource.", result.Message);
-            Assert.Equal(14020001, result.Code);
         }
     }
 }

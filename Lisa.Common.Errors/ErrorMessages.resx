@@ -145,16 +145,7 @@
     <value>The field {field} is not patchable.</value>
   </data>
   <data name="e12030002" xml:space="preserve">
-    <value>The field {field} cannot be replaced.</value>
-  </data>
-  <data name="e12030003" xml:space="preserve">
-    <value>The list {field} cannot be added to.</value>
-  </data>
-  <data name="e12030004" xml:space="preserve">
-    <value>The list {field} cannot be removed from.</value>
-  </data>
-  <data name="e12030005" xml:space="preserve">
-    <value>The field {field} cannot be moved.</value>
+    <value>The field {field} does not supprt the patch action {action}.</value>
   </data>
   <data name="e13010001" xml:space="preserve">
     <value>The field {field} with id {value} doesn't exists.</value>

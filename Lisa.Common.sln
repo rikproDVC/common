@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lisa.Common.Sql.Test", "Lisa.Common.Sql.Test\Lisa.Common.Sql.Test.xproj", "{87868472-0F0E-4006-93CD-06604EB1CDD6}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lisa.Common.ErrorManager", "Lisa.Common.ErrorManager\Lisa.Common.ErrorManager.xproj", "{E8FC4153-6843-4F67-B888-BF1E54D8F49E}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lisa.Common.Errors", "Lisa.Common.Errors\Lisa.Common.Errors.xproj", "{E8FC4153-6843-4F67-B888-BF1E54D8F49E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
